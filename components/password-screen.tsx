@@ -83,7 +83,7 @@ export function PasswordScreen() {
           <Button
             type="submit"
             disabled={pending}
-            className="mt-1 h-12 rounded-xl bg-zinc-950 text-sm font-medium hover:bg-zinc-800"
+            className="mt-1 h-12 rounded-xl bg-zinc-950 text-sm font-medium text-white hover:bg-zinc-800"
           >
             {pending ? 'Signing in…' : 'Continue'}
           </Button>
