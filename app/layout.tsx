@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import { Toaster } from 'sonner'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -23,6 +24,13 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         {children}
+        <Toaster
+          position="bottom-right"
+          theme="system"
+          visibleToasts={2}
+          mobileOffset={{ left: 16, right: 16, bottom: 'max(16px, env(safe-area-inset-bottom))' }}
+          toastOptions={{ classNames: { toast: 'font-sans shadow-sm' } }}
+        />
       </body>
     </html>
   )
