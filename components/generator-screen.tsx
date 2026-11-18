@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { logout } from '@/app/actions/session'
-import { Check, Download, LogOut, Sparkles } from 'lucide-react'
+import { Check, Download, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { AppLogo } from './app-logo'
 import { MiniQr } from './mock-qr'
@@ -37,7 +37,7 @@ export function GeneratorScreen() {
 
   return (
     <main className="min-h-screen bg-[#f7f7f6] text-zinc-950">
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6 lg:px-10">
+      <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5 lg:px-10">
         <div className="flex items-center gap-3">
           <AppLogo />
           <span className="text-sm font-semibold tracking-[-0.02em]">
@@ -53,21 +53,10 @@ export function GeneratorScreen() {
           </button>
         </form>
       </header>
-      <div className="mx-auto max-w-6xl px-6 pb-16 pt-8 lg:px-10 lg:pt-14">
-        <div className="mb-10 max-w-xl">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-500">
-            <Sparkles className="size-3.5" /> Simple by design
-          </div>
-          <h1 className="text-4xl font-semibold tracking-[-0.05em] sm:text-5xl">
-            Make a QR code
-            <br />
-            <span className="text-zinc-400">for anything.</span>
-          </h1>
-          <p className="mt-4 max-w-md text-base leading-7 text-zinc-500">
-            Paste a link, choose a style, and download a polished QR code ready
-            to use anywhere.
-          </p>
-        </div>
+      <div className="mx-auto max-w-6xl px-6 pb-10 pt-4 lg:px-10 lg:pt-5">
+        <h1 className="mb-6 text-center text-[28px] font-semibold leading-tight tracking-[-0.04em] sm:text-4xl">
+          Make a QR code <span className="text-zinc-400">for anything.</span>
+        </h1>
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(380px,0.9fr)]">
           <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-[0_8px_30px_rgba(24,24,27,.03)] sm:p-8">
             <div className="mb-8">
