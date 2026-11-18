@@ -90,10 +90,7 @@ export function useQrCode(url: string | null, style: QrStyle) {
     if (!downloadable) return false
 
     const blob = format === 'svg' ? downloadable.svg : await toPng(downloadable.image)
-    const base = filename.trim().replace(/[<>:"/\\|?*\u0000-\u001f\u007f]/g, '_').replace(/[. ]+$/, '')
-    const safeBase = /^(con|prn|aux|nul|com[1-9¹²³]|lpt[1-9¹²³]) *(\.|$)/i.test(base)
-      ? `_${base}`
-      : base || 'qr-code'
+    const safeBase = normalizeFilename(filename)
 
     const href = URL.createObjectURL(blob)
     const link = document.createElement('a')
@@ -107,6 +104,19 @@ export function useQrCode(url: string | null, style: QrStyle) {
   }
 
   return { preview, ready: !!downloadable, error, failed, download }
+}
+
+function normalizeFilename(filename: string) {
+  const name = filename
+    .trim()
+    .toLowerCase()
+    .replace(/[\s_]+/gu, '-')
+    .replace(/[^\p{L}\p{M}\p{N}-]/gu, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+
+  if (!name) return 'qr-code'
+  return /^(con|prn|aux|nul|com[1-9¹²³]|lpt[1-9¹²³])$/i.test(name) ? `qr-${name}` : name
 }
 
 function toPng(image: HTMLImageElement) {
