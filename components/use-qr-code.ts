@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import QRCodeStyling from 'qr-code-styling'
+import { toast } from 'sonner'
 
 export type QrStyle = 'classic' | 'rounded'
 export type QrFormat = 'png' | 'svg'
@@ -10,7 +11,7 @@ const margin = 140
 
 type QrResult = { url: string; style: QrStyle } & (
   | { src: string; svg: Blob; image: HTMLImageElement }
-  | { error: string }
+  | { error: string | null }
 )
 
 export function getQrUrl(input: string) {
@@ -68,7 +69,10 @@ export function useQrCode(url: string | null, style: QrStyle) {
         await image.decode()
         if (!canceled) setResult({ url, style, src, svg, image })
       } catch {
-        if (!canceled) setResult({ url, style, error: 'Could not generate this QR code. Try another URL.' })
+        if (!canceled) {
+          setResult({ url, style, error: null })
+          toast.error('Could not generate the QR code. Try again.', { id: 'qr-generation' })
+        }
       }
     }
 
@@ -77,12 +81,13 @@ export function useQrCode(url: string | null, style: QrStyle) {
   }, [url, style])
 
   const current = result?.url === url && result.style === style ? result : null
-  const error = current && 'error' in current ? current.error : null
-  const preview = url && !error && result && 'src' in result ? result.src : null
+  const failed = current !== null && 'error' in current
+  const error = failed ? current.error : null
+  const preview = url && !failed && result && 'src' in result ? result.src : null
   const downloadable = current && 'src' in current ? current : null
 
   async function download(format: QrFormat, filename: string) {
-    if (!downloadable) return
+    if (!downloadable) return false
 
     const blob = format === 'svg' ? downloadable.svg : await toPng(downloadable.image)
     const base = filename.trim().replace(/[<>:"/\\|?*\u0000-\u001f\u007f]/g, '_').replace(/[. ]+$/, '')
@@ -98,9 +103,10 @@ export function useQrCode(url: string | null, style: QrStyle) {
     link.click()
     link.remove()
     window.setTimeout(() => URL.revokeObjectURL(href), 1000)
+    return true
   }
 
-  return { preview, ready: !!downloadable, error, download }
+  return { preview, ready: !!downloadable, error, failed, download }
 }
 
 function toPng(image: HTMLImageElement) {

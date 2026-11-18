@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { logout } from '@/app/actions/session'
 import { Check, Download, LogOut, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -17,18 +18,20 @@ export function GeneratorScreen() {
   const [url, setUrl] = useState('')
   const [style, setStyle] = useState<QrStyle>('rounded')
   const [filename, setFilename] = useState('')
-  const [downloadError, setDownloadError] = useState('')
   const input = url.trim()
   const destination = getQrUrl(input)
   const invalid = !!input && !destination
-  const { preview, ready, error, download } = useQrCode(destination, style)
+  const { preview, ready, error, failed, download } = useQrCode(destination, style)
 
   async function downloadQr(format: QrFormat) {
-    setDownloadError('')
+    const label = format.toUpperCase()
+    const id = `qr-download-${format}`
     try {
-      await download(format, filename)
+      if (await download(format, filename)) {
+        toast.success(`${label} download started.`, { id })
+      }
     } catch {
-      setDownloadError('Could not download the QR code. Please try again.')
+      toast.error(`Could not download the ${label}. Try again.`, { id })
     }
   }
 
@@ -91,10 +94,7 @@ export function GeneratorScreen() {
                   spellCheck={false}
                   aria-invalid={invalid}
                   aria-describedby={invalid ? 'url-help url-error' : 'url-help'}
-                  onChange={(event) => {
-                    setUrl(event.target.value)
-                    setDownloadError('')
-                  }}
+                  onChange={(event) => setUrl(event.target.value)}
                   placeholder="https://example.com"
                   className="mt-3 h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-400 focus:bg-white focus:ring-4 focus:ring-zinc-900/5"
                 />
@@ -127,10 +127,7 @@ export function GeneratorScreen() {
                         name="qr-style"
                         value={value}
                         checked={style === value}
-                        onChange={() => {
-                          setStyle(value)
-                          setDownloadError('')
-                        }}
+                        onChange={() => setStyle(value)}
                       />
                       <span className="flex h-full items-center gap-3 rounded-xl border border-zinc-200 p-3 text-left transition hover:border-zinc-400 peer-checked:border-zinc-950 peer-checked:bg-zinc-50 peer-checked:ring-1 peer-checked:ring-zinc-950 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-zinc-950">
                         <MiniQr rounded={value === 'rounded'} />
@@ -201,7 +198,7 @@ export function GeneratorScreen() {
                 <p className="text-center text-xs text-zinc-500" aria-live="polite">
                   {error || (!destination
                     ? 'Enter a URL to generate your preview'
-                    : ready ? 'Ready to download' : 'Updating preview…')}
+                    : failed ? 'Preview unavailable' : ready ? 'Ready to download' : 'Updating preview…')}
                 </p>
               </div>
             </div>
@@ -222,11 +219,6 @@ export function GeneratorScreen() {
                 <Download data-icon="inline-start" /> SVG
               </Button>
             </div>
-            {downloadError && (
-              <p className="mt-4 text-center text-xs text-red-300" role="alert">
-                {downloadError}
-              </p>
-            )}
             <p className="mt-4 text-center text-xs text-zinc-600">
               High resolution · Black on white
             </p>
