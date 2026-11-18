@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from 'react'
 import QRCodeStyling from 'qr-code-styling'
 
 export type QrStyle = 'classic' | 'rounded'
+export type QrFormat = 'png' | 'svg'
 
 const size = 1000
 // At 1000px this leaves at least four modules of white space, even for version 1.
 const margin = 140
 
 type QrResult = { url: string; style: QrStyle } & (
-  | { src: string }
+  | { src: string; svg: Blob; image: HTMLImageElement }
   | { error: string }
 )
 
@@ -65,7 +66,7 @@ export function useQrCode(url: string | null, style: QrStyle) {
         const image = new Image()
         image.src = src
         await image.decode()
-        if (!canceled) setResult({ url, style, src })
+        if (!canceled) setResult({ url, style, src, svg, image })
       } catch {
         if (!canceled) setResult({ url, style, error: 'Could not generate this QR code. Try another URL.' })
       }
@@ -78,5 +79,41 @@ export function useQrCode(url: string | null, style: QrStyle) {
   const current = result?.url === url && result.style === style ? result : null
   const error = current && 'error' in current ? current.error : null
   const preview = url && !error && result && 'src' in result ? result.src : null
-  return { preview, ready: !!current && 'src' in current, error }
+  const downloadable = current && 'src' in current ? current : null
+
+  async function download(format: QrFormat, filename: string) {
+    if (!downloadable) return
+
+    const blob = format === 'svg' ? downloadable.svg : await toPng(downloadable.image)
+    const base = filename.trim().replace(/[<>:"/\\|?*\u0000-\u001f\u007f]/g, '_').replace(/[. ]+$/, '')
+    const safeBase = /^(con|prn|aux|nul|com[1-9¹²³]|lpt[1-9¹²³]) *(\.|$)/i.test(base)
+      ? `_${base}`
+      : base || 'qr-code'
+
+    const href = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = href
+    link.download = `${safeBase}.${format}`
+    document.body.append(link)
+    link.click()
+    link.remove()
+    window.setTimeout(() => URL.revokeObjectURL(href), 1000)
+  }
+
+  return { preview, ready: !!downloadable, error, download }
+}
+
+function toPng(image: HTMLImageElement) {
+  const canvas = document.createElement('canvas')
+  canvas.width = canvas.height = size
+  const context = canvas.getContext('2d')
+  if (!context) throw new Error('Canvas unavailable')
+  context.drawImage(image, 0, 0, size, size)
+
+  return new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) resolve(blob)
+      else reject(new Error('Could not export PNG'))
+    }, 'image/png')
+  })
 }

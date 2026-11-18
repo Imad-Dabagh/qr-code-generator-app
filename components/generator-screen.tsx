@@ -6,7 +6,7 @@ import { Check, Download, LogOut, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { AppLogo } from './app-logo'
 import { MiniQr } from './mock-qr'
-import { getQrUrl, useQrCode, type QrStyle } from './use-qr-code'
+import { getQrUrl, useQrCode, type QrFormat, type QrStyle } from './use-qr-code'
 
 const qrStyles = [
   { value: 'rounded', label: 'Rounded', description: 'Soft corners' },
@@ -17,10 +17,20 @@ export function GeneratorScreen() {
   const [url, setUrl] = useState('')
   const [style, setStyle] = useState<QrStyle>('rounded')
   const [filename, setFilename] = useState('')
+  const [downloadError, setDownloadError] = useState('')
   const input = url.trim()
   const destination = getQrUrl(input)
   const invalid = !!input && !destination
-  const { preview, ready, error } = useQrCode(destination, style)
+  const { preview, ready, error, download } = useQrCode(destination, style)
+
+  async function downloadQr(format: QrFormat) {
+    setDownloadError('')
+    try {
+      await download(format, filename)
+    } catch {
+      setDownloadError('Could not download the QR code. Please try again.')
+    }
+  }
 
   return (
     <main className="min-h-screen bg-[#f7f7f6] text-zinc-950">
@@ -81,7 +91,10 @@ export function GeneratorScreen() {
                   spellCheck={false}
                   aria-invalid={invalid}
                   aria-describedby={invalid ? 'url-help url-error' : 'url-help'}
-                  onChange={(event) => setUrl(event.target.value)}
+                  onChange={(event) => {
+                    setUrl(event.target.value)
+                    setDownloadError('')
+                  }}
                   placeholder="https://example.com"
                   className="mt-3 h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-400 focus:bg-white focus:ring-4 focus:ring-zinc-900/5"
                 />
@@ -114,7 +127,10 @@ export function GeneratorScreen() {
                         name="qr-style"
                         value={value}
                         checked={style === value}
-                        onChange={() => setStyle(value)}
+                        onChange={() => {
+                          setStyle(value)
+                          setDownloadError('')
+                        }}
                       />
                       <span className="flex h-full items-center gap-3 rounded-xl border border-zinc-200 p-3 text-left transition hover:border-zinc-400 peer-checked:border-zinc-950 peer-checked:bg-zinc-50 peer-checked:ring-1 peer-checked:ring-zinc-950 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-zinc-950">
                         <MiniQr rounded={value === 'rounded'} />
@@ -185,25 +201,32 @@ export function GeneratorScreen() {
                 <p className="text-center text-xs text-zinc-500" aria-live="polite">
                   {error || (!destination
                     ? 'Enter a URL to generate your preview'
-                    : ready ? 'Preview ready' : 'Updating preview…')}
+                    : ready ? 'Ready to download' : 'Updating preview…')}
                 </p>
               </div>
             </div>
             <div className="mt-5 grid grid-cols-2 gap-3">
               <Button
-                disabled
+                disabled={!ready}
+                onClick={() => void downloadQr('png')}
                 className="h-12 rounded-xl bg-white text-zinc-950 hover:bg-zinc-100 disabled:bg-zinc-800 disabled:text-zinc-500"
               >
                 <Download data-icon="inline-start" /> PNG
               </Button>
               <Button
-                disabled
+                disabled={!ready}
+                onClick={() => void downloadQr('svg')}
                 variant="outline"
                 className="h-12 rounded-xl border-white/15 bg-transparent text-white hover:bg-white/10 hover:text-white disabled:border-white/10 disabled:text-zinc-600"
               >
                 <Download data-icon="inline-start" /> SVG
               </Button>
             </div>
+            {downloadError && (
+              <p className="mt-4 text-center text-xs text-red-300" role="alert">
+                {downloadError}
+              </p>
+            )}
             <p className="mt-4 text-center text-xs text-zinc-600">
               High resolution · Black on white
             </p>
