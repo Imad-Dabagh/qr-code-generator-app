@@ -15,9 +15,9 @@ function digest(password: string) {
   return createHash('sha256').update(password).digest()
 }
 
-export async function login(_previousError: string | null, formData: FormData) {
+export async function login(formData: FormData) {
   const config = getAuthConfig()
-  if (!config) return 'Sign-in is unavailable. Contact the workspace administrator.'
+  if (!config) return { error: 'Sign-in is unavailable right now.' }
 
   // Only trust a client IP from the hosting platform. Other hosts share one bucket.
   const ip = process.env.VERCEL === '1'
@@ -27,12 +27,12 @@ export async function login(_previousError: string | null, formData: FormData) {
   const now = Date.now()
   const previous = failures.get(bucket)
   const active = previous && previous.expiresAt > now ? previous : undefined
-  const rateLimitError = 'Too many attempts. Try again in a few minutes.'
+  const rateLimitError = { error: 'Too many attempts. Try again in a few minutes.' }
 
   if (active && active.count >= maxFailures) return rateLimitError
 
   const password = formData.get('password')
-  if (typeof password !== 'string' || !password) return 'Enter the shared password.'
+  if (typeof password !== 'string' || !password) return { validationError: 'Enter the shared password.' }
   if (!timingSafeEqual(digest(password), digest(config.password))) {
     if (!active && failures.size >= maxBuckets) {
       for (const [key, entry] of failures) {
@@ -45,12 +45,12 @@ export async function login(_previousError: string | null, formData: FormData) {
       count: (active?.count ?? 0) + 1,
       expiresAt: active?.expiresAt ?? now + windowMs,
     })
-    return 'Incorrect password. Try again.'
+    return { validationError: 'Incorrect password. Try again.' }
   }
 
   failures.delete(bucket)
   await createSession(config.signingKey)
-  redirect('/')
+  return { success: true }
 }
 
 export async function logout() {

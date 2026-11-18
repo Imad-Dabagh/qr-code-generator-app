@@ -2,13 +2,27 @@
 
 import { useActionState, useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
+import { toast } from 'sonner'
 import { login } from '@/app/actions/session'
 import { Button } from '@/components/ui/button'
 import { AppLogo } from './app-logo'
 
 export function PasswordScreen() {
   const [showPassword, setShowPassword] = useState(false)
-  const [error, formAction, pending] = useActionState(login, null)
+  const [error, formAction, pending] = useActionState(
+    async (_previousError: string | null, formData: FormData) => {
+      try {
+        const result = await login(formData)
+        if (result.success) toast.success('Signed in.', { id: 'sign-in' })
+        else if (result.error) toast.error(result.error, { id: 'sign-in' })
+        return result.validationError ?? null
+      } catch {
+        toast.error('Could not sign in. Please try again.', { id: 'sign-in' })
+        return null
+      }
+    },
+    null,
+  )
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#f7f7f6] px-6 py-12 text-zinc-950">
@@ -43,6 +57,7 @@ export function PasswordScreen() {
               autoComplete="current-password"
               required
               disabled={pending}
+              aria-invalid={!pending && !!error}
               aria-describedby="password-status"
               type={showPassword ? 'text' : 'password'}
               placeholder="Enter your password"
