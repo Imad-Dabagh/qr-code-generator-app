@@ -61,14 +61,14 @@ export function PasswordScreen() {
               aria-describedby="password-status"
               type={showPassword ? 'text' : 'password'}
               placeholder="Enter your password"
-              className="h-12 w-full rounded-xl border border-zinc-200 bg-white px-4 pr-12 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-400 focus:ring-4 focus:ring-zinc-900/5"
+              className="h-12 w-full rounded-xl border border-zinc-200 bg-white px-4 pr-12 text-sm outline-none transition placeholder:text-zinc-500 focus:border-zinc-400 focus:ring-4 focus:ring-zinc-900/5"
             />
             <button
               type="button"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
               disabled={pending}
               onClick={() => setShowPassword((visible) => !visible)}
-              className="absolute right-1 top-1 flex size-10 items-center justify-center rounded-lg text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700"
+              className="absolute right-1 top-1 flex size-10 items-center justify-center rounded-lg text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-700"
             >
               {showPassword ? (
                 <EyeOff className="size-4" />
@@ -88,7 +88,7 @@ export function PasswordScreen() {
             {pending ? 'Signing in…' : 'Continue'}
           </Button>
         </form>
-        <p className="mt-8 text-xs text-zinc-400">
+        <p className="mt-8 text-xs text-zinc-500">
           Use the shared password to access this workspace.
         </p>
       </section>

@@ -71,7 +71,7 @@ export function GeneratorScreen() {
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(380px,0.9fr)]">
           <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-[0_8px_30px_rgba(24,24,27,.03)] sm:p-8">
             <div className="mb-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-400">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">
                 01 / Configure
               </p>
               <h2 className="mt-2 text-xl font-semibold tracking-[-0.03em]">
@@ -83,7 +83,7 @@ export function GeneratorScreen() {
                 <label htmlFor="url" className="text-sm font-medium">
                   Website URL
                 </label>
-                <p id="url-help" className="mt-1.5 text-xs leading-5 text-zinc-400">
+                <p id="url-help" className="mt-1.5 text-xs leading-5 text-zinc-500">
                   The QR code will open this link directly.
                 </p>
                 <input
@@ -96,7 +96,7 @@ export function GeneratorScreen() {
                   aria-describedby={invalid ? 'url-help url-error' : 'url-help'}
                   onChange={(event) => setUrl(event.target.value)}
                   placeholder="https://example.com"
-                  className="mt-3 h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-400 focus:bg-white focus:ring-4 focus:ring-zinc-900/5"
+                  className="mt-3 h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm outline-none transition placeholder:text-zinc-500 focus:border-zinc-400 focus:bg-white focus:ring-4 focus:ring-zinc-900/5"
                 />
                 {invalid && (
                   <p id="url-error" className="mt-2 text-xs text-red-700">
@@ -110,11 +110,11 @@ export function GeneratorScreen() {
                     <p id="qr-style-label" className="text-sm font-medium">
                       QR Code Style
                     </p>
-                    <p className="mt-1.5 text-xs text-zinc-400">
+                    <p className="mt-1.5 text-xs text-zinc-500">
                       Choose the look that fits your brand.
                     </p>
                   </div>
-                  <span className="text-xs text-zinc-400">
+                  <span className="text-xs text-zinc-500">
                     {style === 'rounded' ? 'Rounded' : 'Classic'}
                   </span>
                 </div>
@@ -135,7 +135,7 @@ export function GeneratorScreen() {
                           <span className="block text-sm font-medium">
                             {label}
                           </span>
-                          <span className="mt-1 block text-xs text-zinc-400">
+                          <span className="mt-1 block text-xs text-zinc-500">
                             {description}
                           </span>
                         </span>
@@ -153,16 +153,16 @@ export function GeneratorScreen() {
               <div>
                 <label htmlFor="filename" className="text-sm font-medium">
                   Filename{' '}
-                  <span className="font-normal text-zinc-400">(Optional)</span>
+                  <span className="font-normal text-zinc-500">(Optional)</span>
                 </label>
                 <input
                   id="filename"
                   value={filename}
                   onChange={(event) => setFilename(event.target.value)}
                   placeholder="qr-code"
-                  className="mt-3 h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-400 focus:bg-white focus:ring-4 focus:ring-zinc-900/5"
+                  className="mt-3 h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm outline-none transition placeholder:text-zinc-500 focus:border-zinc-400 focus:bg-white focus:ring-4 focus:ring-zinc-900/5"
                 />
-                <p className="mt-2 text-xs text-zinc-400">
+                <p className="mt-2 text-xs text-zinc-500">
                   Leave empty to use qr-code.
                 </p>
               </div>
@@ -171,14 +171,14 @@ export function GeneratorScreen() {
           <section className="rounded-2xl border border-zinc-200 bg-zinc-950 p-6 text-white shadow-[0_12px_40px_rgba(24,24,27,.12)] sm:p-8">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-400">
                   02 / Preview
                 </p>
                 <h2 className="mt-2 text-xl font-semibold tracking-[-0.03em]">
                   Your result
                 </h2>
               </div>
-              <span className="rounded-full border border-white/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-zinc-500">
+              <span className="rounded-full border border-white/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-zinc-400">
                 {style}
               </span>
             </div>
@@ -219,7 +219,7 @@ export function GeneratorScreen() {
                 <Download data-icon="inline-start" /> SVG
               </Button>
             </div>
-            <p className="mt-4 text-center text-xs text-zinc-600">
+            <p className="mt-4 text-center text-xs text-zinc-400">
               High resolution · Black on white
             </p>
           </section>
