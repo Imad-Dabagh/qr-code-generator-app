@@ -57,7 +57,7 @@ export function GeneratorScreen() {
         <h1 className="mb-6 text-center text-[28px] font-semibold leading-tight tracking-[-0.04em] sm:text-4xl">
           Make a QR code <span className="text-zinc-400">for anything.</span>
         </h1>
-        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(380px,0.9fr)]">
+        <div className="grid items-start gap-6 lg:items-stretch lg:grid-cols-[minmax(0,1fr)_minmax(380px,0.9fr)]">
           <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-[0_8px_30px_rgba(24,24,27,.03)] sm:p-8">
             <div className="mb-8">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">
