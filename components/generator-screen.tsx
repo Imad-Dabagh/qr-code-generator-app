@@ -1,3 +1,7 @@
+'use client'
+
+import { useState } from 'react'
+import { logout } from '@/app/actions/session'
 import { Check, Download, LogOut, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { AppLogo } from './app-logo'
@@ -8,27 +12,13 @@ const qrStyles = [
   { value: 'classic', label: 'Classic', description: 'Sharp modules' },
 ] as const
 
-export type QrStyle = (typeof qrStyles)[number]['value']
+type QrStyle = (typeof qrStyles)[number]['value']
 
-type GeneratorScreenProps = {
-  url: string
-  onUrlChange: (url: string) => void
-  style: QrStyle
-  onStyleChange: (style: QrStyle) => void
-  filename: string
-  onFilenameChange: (filename: string) => void
-  onLogout: () => void
-}
+export function GeneratorScreen() {
+  const [url, setUrl] = useState('')
+  const [style, setStyle] = useState<QrStyle>('rounded')
+  const [filename, setFilename] = useState('')
 
-export function GeneratorScreen({
-  url,
-  onUrlChange,
-  style,
-  onStyleChange,
-  filename,
-  onFilenameChange,
-  onLogout,
-}: GeneratorScreenProps) {
   return (
     <main className="min-h-screen bg-[#f7f7f6] text-zinc-950">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6 lg:px-10">
@@ -38,12 +28,14 @@ export function GeneratorScreen({
             QR Code Generator
           </span>
         </div>
-        <button
-          onClick={onLogout}
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-zinc-500 transition hover:bg-white hover:text-zinc-900"
-        >
-          <LogOut className="size-4" /> Log out
-        </button>
+        <form action={logout}>
+          <button
+            type="submit"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-zinc-500 transition hover:bg-white hover:text-zinc-900"
+          >
+            <LogOut className="size-4" /> Log out
+          </button>
+        </form>
       </header>
       <div className="mx-auto max-w-6xl px-6 pb-16 pt-8 lg:px-10 lg:pt-14">
         <div className="mb-10 max-w-xl">
@@ -81,7 +73,7 @@ export function GeneratorScreen({
                 <input
                   id="url"
                   value={url}
-                  onChange={(event) => onUrlChange(event.target.value)}
+                  onChange={(event) => setUrl(event.target.value)}
                   placeholder="https://example.com"
                   className="mt-3 h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-400 focus:bg-white focus:ring-4 focus:ring-zinc-900/5"
                 />
@@ -109,7 +101,7 @@ export function GeneratorScreen({
                         name="qr-style"
                         value={value}
                         checked={style === value}
-                        onChange={() => onStyleChange(value)}
+                        onChange={() => setStyle(value)}
                       />
                       <span className="flex h-full items-center gap-3 rounded-xl border border-zinc-200 p-3 text-left transition hover:border-zinc-400 peer-checked:border-zinc-950 peer-checked:bg-zinc-50 peer-checked:ring-1 peer-checked:ring-zinc-950 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-zinc-950">
                         <MiniQr rounded={value === 'rounded'} />
@@ -140,7 +132,7 @@ export function GeneratorScreen({
                 <input
                   id="filename"
                   value={filename}
-                  onChange={(event) => onFilenameChange(event.target.value)}
+                  onChange={(event) => setFilename(event.target.value)}
                   placeholder="qr-code"
                   className="mt-3 h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-400 focus:bg-white focus:ring-4 focus:ring-zinc-900/5"
                 />
