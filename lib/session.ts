@@ -6,7 +6,7 @@ import { cookies } from 'next/headers'
 const secure = process.env.NODE_ENV === 'production'
 const cookieName = secure ? '__Host-qr-session' : 'qr-session'
 const cookieOptions = { httpOnly: true, sameSite: 'lax', secure, path: '/' } as const
-const sessionLifetime = 12 * 60 * 60 * 1000
+const sessionLifetimeSeconds = 30 * 24 * 60 * 60
 
 export function getAuthConfig() {
   const password = process.env.APP_PASSWORD
@@ -32,7 +32,6 @@ export async function hasSession() {
   if (!config) return false
 
   const token = cookieStore.get(cookieName)?.value
-  // Omitting Expires and Max-Age makes this a browser-session cookie.
   const match = token?.match(/^([0-9]{13}\.[a-f0-9]{32})\.([A-Za-z0-9_-]{43})$/)
   if (!match) return false
 
@@ -45,10 +44,10 @@ export async function hasSession() {
 }
 
 export async function createSession(key: Buffer) {
-  const payload = `${Date.now() + sessionLifetime}.${randomBytes(16).toString('hex')}`
+  const payload = `${Date.now() + sessionLifetimeSeconds * 1000}.${randomBytes(16).toString('hex')}`
   const token = `${payload}.${sign(payload, key)}`
   const cookieStore = await cookies()
-  cookieStore.set(cookieName, token, cookieOptions)
+  cookieStore.set(cookieName, token, { ...cookieOptions, maxAge: sessionLifetimeSeconds })
 }
 
 export async function clearSession() {
