@@ -118,7 +118,7 @@ export function GeneratorScreen() {
                     {style === 'rounded' ? 'Rounded' : 'Classic'}
                   </span>
                 </div>
-                <div className="mt-4 grid grid-cols-2 gap-3">
+                <div className="mt-4 grid grid-cols-1 min-[480px]:grid-cols-2 gap-3">
                   {qrStyles.map(({ value, label, description }) => (
                     <label key={value} className="relative block">
                       <input

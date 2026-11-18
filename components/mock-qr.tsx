@@ -26,7 +26,7 @@ export function MiniQr({ rounded = false }: { rounded?: boolean }) {
   return (
     <span
       aria-hidden="true"
-      className="grid size-14 grid-cols-7 gap-[2px] rounded-md bg-white p-1.5 shadow-[0_1px_2px_rgba(0,0,0,.08)]"
+      className="grid size-14 shrink-0 grid-cols-7 gap-[2px] rounded-md bg-white p-1.5 shadow-[0_1px_2px_rgba(0,0,0,.08)]"
     >
       {Array.from({ length: 49 }, (_, index) => {
         const filled = qrPattern[Math.floor(index / 7)][(index % 7) * 3] === '1'
