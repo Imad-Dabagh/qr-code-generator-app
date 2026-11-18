@@ -26,7 +26,7 @@ export default function RootLayout({
         {children}
         <Toaster
           position="bottom-right"
-          theme="system"
+          theme="light"
           visibleToasts={2}
           mobileOffset={{ left: 16, right: 16, bottom: 'max(16px, env(safe-area-inset-bottom))' }}
           toastOptions={{ classNames: { toast: 'font-sans shadow-sm' } }}
