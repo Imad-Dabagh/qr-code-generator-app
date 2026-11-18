@@ -5,19 +5,22 @@ import { logout } from '@/app/actions/session'
 import { Check, Download, LogOut, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { AppLogo } from './app-logo'
-import { MiniQr, MockQrPreview } from './mock-qr'
+import { MiniQr } from './mock-qr'
+import { getQrUrl, useQrCode, type QrStyle } from './use-qr-code'
 
 const qrStyles = [
   { value: 'rounded', label: 'Rounded', description: 'Soft corners' },
   { value: 'classic', label: 'Classic', description: 'Sharp modules' },
 ] as const
 
-type QrStyle = (typeof qrStyles)[number]['value']
-
 export function GeneratorScreen() {
   const [url, setUrl] = useState('')
   const [style, setStyle] = useState<QrStyle>('rounded')
   const [filename, setFilename] = useState('')
+  const input = url.trim()
+  const destination = getQrUrl(input)
+  const invalid = !!input && !destination
+  const { preview, ready, error } = useQrCode(destination, style)
 
   return (
     <main className="min-h-screen bg-[#f7f7f6] text-zinc-950">
@@ -67,16 +70,26 @@ export function GeneratorScreen() {
                 <label htmlFor="url" className="text-sm font-medium">
                   Website URL
                 </label>
-                <p className="mt-1.5 text-xs leading-5 text-zinc-400">
+                <p id="url-help" className="mt-1.5 text-xs leading-5 text-zinc-400">
                   The QR code will open this link directly.
                 </p>
                 <input
                   id="url"
                   value={url}
+                  type="url"
+                  autoComplete="url"
+                  spellCheck={false}
+                  aria-invalid={invalid}
+                  aria-describedby={invalid ? 'url-help url-error' : 'url-help'}
                   onChange={(event) => setUrl(event.target.value)}
                   placeholder="https://example.com"
                   className="mt-3 h-12 w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-400 focus:bg-white focus:ring-4 focus:ring-zinc-900/5"
                 />
+                {invalid && (
+                  <p id="url-error" className="mt-2 text-xs text-red-700">
+                    Enter a valid URL starting with https:// or http://.
+                  </p>
+                )}
               </div>
               <div role="radiogroup" aria-labelledby="qr-style-label">
                 <div className="flex items-end justify-between">
@@ -157,24 +170,34 @@ export function GeneratorScreen() {
               </span>
             </div>
             <div className="mt-8 flex min-h-[320px] items-center justify-center rounded-xl bg-white p-5 sm:min-h-[360px]">
-              <div className="flex flex-col items-center gap-4">
-                <MockQrPreview rounded={style === 'rounded'} />
-                <p className="text-xs text-zinc-400">
-                  {url
-                    ? 'Sample QR preview'
-                    : 'Enter a URL to generate your preview'}
+              <div className="flex w-full min-w-0 flex-col items-center gap-4">
+                <div className="aspect-square w-full max-w-[232px] sm:max-w-[272px]">
+                  {preview && (
+                    <img
+                      src={preview}
+                      alt="QR code preview"
+                      width={1000}
+                      height={1000}
+                      className="block size-full"
+                    />
+                  )}
+                </div>
+                <p className="text-center text-xs text-zinc-500" aria-live="polite">
+                  {error || (!destination
+                    ? 'Enter a URL to generate your preview'
+                    : ready ? 'Preview ready' : 'Updating preview…')}
                 </p>
               </div>
             </div>
             <div className="mt-5 grid grid-cols-2 gap-3">
               <Button
-                disabled={!url}
+                disabled
                 className="h-12 rounded-xl bg-white text-zinc-950 hover:bg-zinc-100 disabled:bg-zinc-800 disabled:text-zinc-500"
               >
                 <Download data-icon="inline-start" /> PNG
               </Button>
               <Button
-                disabled={!url}
+                disabled
                 variant="outline"
                 className="h-12 rounded-xl border-white/15 bg-transparent text-white hover:bg-white/10 hover:text-white disabled:border-white/10 disabled:text-zinc-600"
               >

@@ -44,25 +44,3 @@ export function MiniQr({ rounded = false }: { rounded?: boolean }) {
     </span>
   )
 }
-
-export function MockQrPreview({ rounded }: { rounded: boolean }) {
-  return (
-    <div
-      aria-hidden="true"
-      className="grid size-[232px] grid-cols-21 gap-0.5 bg-white p-3 sm:size-[272px] sm:p-4"
-    >
-      {qrPattern.flatMap((row, rowIndex) =>
-        [...row].map((cell, cellIndex) => (
-          <span
-            key={`${rowIndex}-${cellIndex}`}
-            className={
-              cell === '1'
-                ? `bg-zinc-950 ${rounded ? 'rounded-[3px]' : ''}`
-                : 'bg-white'
-            }
-          />
-        )),
-      )}
-    </div>
-  )
-}
