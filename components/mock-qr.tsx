@@ -1,0 +1,68 @@
+const qrPattern = [
+  '111111100101101111111',
+  '100000101110101000001',
+  '101110100010101011101',
+  '101110101101101011101',
+  '101110100111101011101',
+  '100000101010101000001',
+  '111111101010101111111',
+  '000000001101100000000',
+  '110101111001011101101',
+  '001110001111100010010',
+  '111011101010111011111',
+  '010100010111001010100',
+  '101111111001111110101',
+  '000000001110100000000',
+  '111111101011101111111',
+  '100000100110101000001',
+  '101110101111101011101',
+  '101110100001101011101',
+  '101110101101101011101',
+  '100000101010101000001',
+  '111111101101101111111',
+]
+
+export function MiniQr({ rounded = false }: { rounded?: boolean }) {
+  return (
+    <span
+      aria-hidden="true"
+      className="grid size-14 grid-cols-7 gap-[2px] rounded-md bg-white p-1.5 shadow-[0_1px_2px_rgba(0,0,0,.08)]"
+    >
+      {Array.from({ length: 49 }, (_, index) => {
+        const filled = qrPattern[Math.floor(index / 7)][(index % 7) * 3] === '1'
+        return (
+          <span
+            key={index}
+            className={
+              filled
+                ? `bg-zinc-900 ${rounded ? 'rounded-[2px]' : ''}`
+                : 'bg-transparent'
+            }
+          />
+        )
+      })}
+    </span>
+  )
+}
+
+export function MockQrPreview({ rounded }: { rounded: boolean }) {
+  return (
+    <div
+      aria-hidden="true"
+      className="grid size-[232px] grid-cols-21 gap-0.5 bg-white p-3 sm:size-[272px] sm:p-4"
+    >
+      {qrPattern.flatMap((row, rowIndex) =>
+        [...row].map((cell, cellIndex) => (
+          <span
+            key={`${rowIndex}-${cellIndex}`}
+            className={
+              cell === '1'
+                ? `bg-zinc-950 ${rounded ? 'rounded-[3px]' : ''}`
+                : 'bg-white'
+            }
+          />
+        )),
+      )}
+    </div>
+  )
+}
