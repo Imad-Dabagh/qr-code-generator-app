@@ -189,7 +189,7 @@ export function GeneratorScreen() {
                 <p className="text-center text-xs text-zinc-500" aria-live="polite">
                   {error || (!destination
                     ? 'Enter a URL to generate your preview'
-                    : failed ? 'Preview unavailable' : ready ? 'Ready to download' : 'Updating preview…')}
+                    : failed ? 'Preview unavailable' : ready ? null : 'Updating preview…')}
                 </p>
               </div>
             </div>
