@@ -49,7 +49,7 @@ export function GeneratorScreen() {
         <form action={logout}>
           <button
             type="submit"
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-zinc-500 transition hover:bg-white hover:text-zinc-900"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-500 transition hover:bg-white hover:text-red-600"
           >
             <LogOut className="size-4" /> Log out
           </button>
