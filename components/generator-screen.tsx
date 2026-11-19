@@ -186,11 +186,13 @@ export function GeneratorScreen() {
                     />
                   )}
                 </div>
-                <p className="text-center text-xs text-zinc-500" aria-live="polite">
-                  {error || (!destination
-                    ? 'Enter a URL to generate your preview'
-                    : failed ? 'Preview unavailable' : null)}
-                </p>
+                {(error || !destination || failed) && (
+                  <p className="text-center text-xs text-zinc-500" aria-live="polite">
+                    {error || (!destination
+                      ? 'Enter a URL to generate your preview'
+                      : 'Preview unavailable')}
+                  </p>
+                )}
               </div>
             </div>
             <div className="mt-5 grid grid-cols-2 gap-3">
