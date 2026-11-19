@@ -175,7 +175,7 @@ export function GeneratorScreen() {
             </div>
             <div className="mt-8 flex min-h-[320px] items-center justify-center rounded-xl bg-white p-5 sm:min-h-[360px]">
               <div className="flex w-full min-w-0 flex-col items-center gap-4">
-                <div className="aspect-square w-full max-w-[232px] sm:max-w-[272px]">
+                <div className="aspect-square w-full max-w-[256px] sm:max-w-[320px]">
                   {preview && (
                     <img
                       src={preview}
